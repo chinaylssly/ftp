@@ -82,7 +82,7 @@ class Sftp(object):
 
             try:
 
-                putty_server_size=Size.putty_size(server_size)
+                putty_server_size=Size.putty_size(filesize)
 
                 log=u'from %s download %s,filesize=%s'%(server_path,local_path,putty_server_size)
                 print log
