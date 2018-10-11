@@ -5,6 +5,16 @@ from command import Command
 from sftp import Sftp
 from size import Size
 
+if __name__=='__main__':
+
+    logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s',
+                    # filename=u'e:/psftp/voice/voice.log',
+                    # filemode='w'
+                    ) 
+
+
+
 class FTP(Sftp,Command):
 
 
@@ -26,14 +36,14 @@ class FTP(Sftp,Command):
         ##下载服务器文件到本地
 
         filesize=self.get_server_size(server_path=server_path)
-        self.get(server_path=server_path,local_floder=local_floder,filesize=filesize)
+        self.sftp_get(server_path=server_path,local_floder=local_floder,filesize=filesize)
 
 
     def ftp_put(self,local_path=u'c:/users/sunzhiming/desktop/books.html',server_floder=u'/python'):
         #上传文件到服务器
 
         filesize=self.size.get_local_size(local_path)
-        self.put(local_path=local_path,server_floder=server_floder,filesize=filesize)
+        self.sftp_put(local_path=local_path,server_floder=server_floder,filesize=filesize)
 
 
 

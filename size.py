@@ -2,59 +2,110 @@
 
 import os
 import logging
+from command import Command
 
+
+# if __name__=='__main__':
+
+#     logging.basicConfig(level=logging.DEBUG,
+#                     format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s',
+#                     # filename=u'e:/psftp/voice/voice.log',
+#                     # filemode='w'
+#                     ) 
 
 class Size(object):
 
     @classmethod
-    def get_local_size(self,path=u'sftp.py'):
+    def get_local_size(self,local_path=u'sftp.py'):
 
-        size=os.path.getsize(path)
+        size=os.path.getsize(local_path)
+   
+        putty_size=self.putty_size(size)
 
-        size=size*1.0/1024
-        if size<1024:
-            extend='K'
-            if size<1:
-                size=1
+        log=u'get %s size=%s'%(local_path,putty_size)
+        print log
+        logging.info(log)
+
+        return size
+
+    @classmethod
+    def get_server_size(self,command,server_path):
+
+        query='ls -l "%s"'%server_path
+        out=command.execute(query=query)
+        line=out[0].strip()
+
+        size=line.split(' ')[4]
+        size=int(size)
+        putty_size=self.putty_size(size)
+
+        log=u'get %s size=%s'%(server_path,putty_size)
+        print log
+        logging.info(log)
+
+        return size
+
+    @classmethod
+    def putty_size(self,size=1233333):
+
+        ksize=size*1.0/1024
+        if ksize<1024:
+
+            if ksize<1:
+                extend='B'
+                size=size
+
             else:
-                size=int(size)   
+                extend='K'
+                size=ksize
 
         else:
 
-            size=size/1024
+            msize=ksize/1024
             extend='M'
+            size=msize
 
-            if size<1:
-                size=1
-            else:
-                size=int(size)
+            if msize>=1024:
 
-        size=u'%s%s'%(size,extend)
-        log=u'get %s size=%s'%(path,size)
-        print log
-        logging.info(log)
+                gsize=msize/1024
+                extend='G'
+                size=gsize
 
-        return size
+        return u'%.2f%s'%(size,extend)
 
-        
-    def get_server_size(self,command,server_path):
-        ##获取服务器上文件大小
+    @classmethod
+    def compare_size(self,server_size,local_size):
 
-        query='du -h %s'%server_path
-        out=command.execute(query=query)
-        size=out[0].split('\t')[0]
+        diff_size=abs(server_size - local_size)
 
-        log=u'get %s size=%s'%(server_path,size)
-        print log
-        logging.info(log)
+        return diff_size
 
-        return size
 
-if __name__=='__main__':
+
+
+def test():
 
     Size.get_local_size()
     size=Size()
-    size.get_local_size()
+    # size.get_local_size()
+    command=Command()
+    server_path=u'/python/aastory/story/玄幻/武修道统/第6回 破阵破敌.txt'
+    out=size.get_server_size(command=command,server_path=server_path)
+
+
+def test_putty():
+
+    sizes=[500,1024,1600,1048576,1300000,1111111111,11111111111111]
+
+    for size in sizes:
+
+        print Size.putty_size(size)
+
+if __name__=='__main__':
+
+    # test_putty()
+    test()
+    
 
 
 
