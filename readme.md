@@ -4,7 +4,8 @@
     pip install paramiko 安装paramiko库
 
 
-2,  请再config.py文件中修改自己的服务器信息
+2,  请在config.py文件中修改自己的服务器信息
+
 
 
 
